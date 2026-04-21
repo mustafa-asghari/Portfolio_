@@ -5,6 +5,7 @@ dist/
 build/
 .DS_Store
 *.log
+unicorn.js
 .env
 .env*
 !.env.example

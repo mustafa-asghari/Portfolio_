@@ -95,7 +95,6 @@ export default function Home() {
         <div className="project-grid">
           {projects.map((project) => (
             <article className="project-card" key={project.title}>
-              <div className="project-mark">{project.mark}</div>
               <h2>{project.title}</h2>
               <p>{project.summary}</p>
               <div className="tag-list" aria-label={`${project.title} technologies`}>
