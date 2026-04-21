@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
   ssr: false,
@@ -24,6 +24,21 @@ function getCurrentTheme(): Theme {
   }
 
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+function getServerThemeSnapshot(): Theme {
+  return "light";
+}
+
+function subscribeToThemeChanges(onStoreChange: () => void) {
+  const observer = new MutationObserver(onStoreChange);
+
+  observer.observe(document.documentElement, {
+    attributeFilter: ["data-theme"],
+    attributes: true
+  });
+
+  return () => observer.disconnect();
 }
 
 function shouldBlockAttributionRequest(value: unknown) {
@@ -158,20 +173,11 @@ export function HeroUnicornScene() {
     installUnicornAttributionBlocker();
     return true;
   });
-  const [theme, setTheme] = useState<Theme>(() => getCurrentTheme());
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setTheme(getCurrentTheme());
-    });
-
-    observer.observe(document.documentElement, {
-      attributeFilter: ["data-theme"],
-      attributes: true
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const theme = useSyncExternalStore(
+    subscribeToThemeChanges,
+    getCurrentTheme,
+    getServerThemeSnapshot
+  );
 
   const isLightMode = theme === "light";
 

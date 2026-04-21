@@ -19,16 +19,16 @@
   --hover-soft: rgba(255, 255, 255, 0.44);
   --tag-hover: rgba(12, 12, 12, 0.12);
   --dot-soft: rgba(0, 0, 0, 0.18);
-  --scene-surface: rgba(255, 255, 255, 0.72);
+  --scene-surface: rgba(24, 24, 24, 0.12);
   --scene-edge: rgba(255, 255, 255, 0.99);
   --scene-fade: rgba(255, 255, 255, 0);
-  --scene-highlight: rgba(232, 232, 232, 0.22);
-  --scene-filter: invert(1) grayscale(1) contrast(0.82) brightness(1.18);
+  --scene-highlight: rgba(0, 0, 0, 0.16);
+  --scene-filter: invert(1) grayscale(1) contrast(0.92) brightness(1.1);
   --scene-blend: multiply;
-  --scene-opacity: 0.66;
+  --scene-opacity: 0.78;
   --scene-mask-top: 30%;
   --scene-overlay-top: 42%;
-  --scene-shadow: 0 26px 90px rgba(0, 0, 0, 0.035);
+  --scene-shadow: 0 26px 90px rgba(0, 0, 0, 0.055);
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.055);
   --font-main: "Avenir Next", "Neue Haas Grotesk Text", "Helvetica Neue", sans-serif;
 }
@@ -495,7 +495,7 @@ p {
 
 .hero-unicorn-effect[data-scene-theme="light"] .unicorn-scene {
   max-width: none;
-  transform: translate(-25%, -30%) scale(0.72);
+  transform: matrix(0.54, 0, 0, 0.54, 0, -18);
   transform-origin: top left;
 }
 
@@ -1185,6 +1185,10 @@ p {
     height: 300px;
   }
 
+  .hero-unicorn-effect[data-scene-theme="light"] .unicorn-scene {
+    transform: matrix(0.5, 0, 0, 0.5, 0, -18);
+  }
+
   .dot-grid {
     right: 28%;
   }
@@ -1236,6 +1240,40 @@ p {
 }
 
 @media (max-width: 760px) {
+  .mobile-scroll-ready .mobile-scroll-reveal {
+    opacity: 0;
+    scale: 0.985;
+    translate: 0 22px;
+    transition:
+      opacity 560ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      scale 560ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      translate 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-delay: var(--mobile-reveal-delay, 0ms);
+    will-change: opacity, scale, translate;
+  }
+
+  .mobile-scroll-ready .mobile-scroll-reveal.is-mobile-visible {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+
+  .mobile-scroll-ready .project-card.mobile-scroll-reveal,
+  .mobile-scroll-ready .about-card.mobile-scroll-reveal,
+  .mobile-scroll-ready .footer.mobile-scroll-reveal {
+    translate: 0 28px;
+  }
+
+  .mobile-scroll-ready .contact-list > .mobile-scroll-reveal,
+  .mobile-scroll-ready .social-links > .mobile-scroll-reveal {
+    translate: -14px 0;
+  }
+
+  .mobile-scroll-ready .contact-list > .mobile-scroll-reveal.is-mobile-visible,
+  .mobile-scroll-ready .social-links > .mobile-scroll-reveal.is-mobile-visible {
+    translate: 0 0;
+  }
+
   .site-shell {
     width: min(100% - 32px, 560px);
   }
@@ -1290,6 +1328,10 @@ p {
     width: 620px;
     height: 230px;
     opacity: 0.76;
+  }
+
+  .hero-unicorn-effect[data-scene-theme="light"] .unicorn-scene {
+    transform: matrix(0.43, 0, 0, 0.43, 0, -10);
   }
 
   .dot-grid {

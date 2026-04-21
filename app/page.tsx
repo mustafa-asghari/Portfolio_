@@ -7,6 +7,7 @@ import {
   SkillIcon,
   StatIcon
 } from "@/components/PortfolioIcons";
+import { MobileScrollAnimator } from "@/components/MobileScrollAnimator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HeroUnicornScene } from "@/components/UnicornBackground";
 import { navItems, profile, projects, skills, stats } from "@/lib/portfolio-data";
@@ -14,6 +15,7 @@ import { navItems, profile, projects, skills, stats } from "@/lib/portfolio-data
 export default function Home() {
   return (
     <main className="site-shell" id="home">
+      <MobileScrollAnimator />
       <header className="site-header">
         <a href="#home" className="brand" aria-label="Mustafa Asghari home">
           {profile.initials}
