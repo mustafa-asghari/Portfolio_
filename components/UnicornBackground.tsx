@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
   ssr: false,
@@ -9,11 +9,22 @@ const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
 });
 
 const HERO_UNICORN_PROJECT_ID = "6HLD9lRgbiClnJh2Z00Q";
-const UNICORN_SDK_URL =
+const DARK_UNICORN_SDK_URL =
   "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.9/dist/unicornStudio.umd.js";
+const LIGHT_UNICORN_SDK_URL =
+  "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@2.1.9/dist/unicornStudio.umd.js";
 const BLOCKED_ATTRIBUTION_URLS = ["made_in_us_small_web.svg", "free_user_logo.png"];
 const ATTRIBUTION_BLOCKER_VERSION = BLOCKED_ATTRIBUTION_URLS.join("|");
 const EMPTY_SVG_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
+type Theme = "light" | "dark";
+
+function getCurrentTheme(): Theme {
+  if (typeof document === "undefined") {
+    return "light";
+  }
+
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
 
 function shouldBlockAttributionRequest(value: unknown) {
   const url =
@@ -128,7 +139,7 @@ export function UnicornBackground() {
       {canRenderScene ? (
         <UnicornScene
           projectId={HERO_UNICORN_PROJECT_ID}
-          sdkUrl={UNICORN_SDK_URL}
+          sdkUrl={DARK_UNICORN_SDK_URL}
           width="100vw"
           height="100vh"
           className="unicorn-scene"
@@ -147,15 +158,32 @@ export function HeroUnicornScene() {
     installUnicornAttributionBlocker();
     return true;
   });
+  const [theme, setTheme] = useState<Theme>(() => getCurrentTheme());
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(getCurrentTheme());
+    });
+
+    observer.observe(document.documentElement, {
+      attributeFilter: ["data-theme"],
+      attributes: true
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const isLightMode = theme === "light";
 
   return (
-    <div className="hero-unicorn-effect" aria-hidden="true">
+    <div className="hero-unicorn-effect" data-scene-theme={theme} aria-hidden="true">
       {canRenderScene ? (
         <UnicornScene
+          key={theme}
           projectId={HERO_UNICORN_PROJECT_ID}
-          sdkUrl={UNICORN_SDK_URL}
-          width="100%"
-          height="100%"
+          sdkUrl={isLightMode ? LIGHT_UNICORN_SDK_URL : DARK_UNICORN_SDK_URL}
+          width={isLightMode ? "1440px" : "100%"}
+          height={isLightMode ? "900px" : "400px"}
           className="unicorn-scene"
           scale={1}
           dpi={1.5}
