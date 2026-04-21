@@ -7,6 +7,8 @@ import {
   SkillIcon,
   StatIcon
 } from "@/components/PortfolioIcons";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { HeroUnicornScene } from "@/components/UnicornBackground";
 import { navItems, profile, projects, skills, stats } from "@/lib/portfolio-data";
 
 export default function Home() {
@@ -23,10 +25,13 @@ export default function Home() {
             </a>
           ))}
         </nav>
-        <a href="#contact" className="header-contact">
-          <ContactIcon />
-          Contact
-        </a>
+        <div className="header-actions">
+          <ThemeToggle />
+          <a href="#contact" className="header-contact">
+            <ContactIcon />
+            Contact
+          </a>
+        </div>
       </header>
 
       <section className="hero-section section-divider">
@@ -49,8 +54,7 @@ export default function Home() {
         </div>
 
         <div className="hero-art" aria-hidden="true">
-          <div className="dot-grid" />
-          <div className="floating-mark">MA</div>
+          <HeroUnicornScene />
         </div>
 
         <div className="meta-row" aria-label="Profile availability">

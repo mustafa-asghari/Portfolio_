@@ -8,6 +8,9 @@ const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
   loading: () => null
 });
 
+const HERO_UNICORN_PROJECT_ID = "6HLD9lRgbiClnJh2Z00Q";
+const UNICORN_SDK_URL =
+  "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.9/dist/unicornStudio.umd.js";
 const BLOCKED_ATTRIBUTION_URLS = ["made_in_us_small_web.svg", "free_user_logo.png"];
 const ATTRIBUTION_BLOCKER_VERSION = BLOCKED_ATTRIBUTION_URLS.join("|");
 const EMPTY_SVG_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
@@ -124,10 +127,35 @@ export function UnicornBackground() {
     <div className="unicorn-background" aria-hidden="true">
       {canRenderScene ? (
         <UnicornScene
-          projectId="k3JAUs5BqgzyUrcm9q5P"
-          sdkUrl="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.9/dist/unicornStudio.umd.js"
+          projectId={HERO_UNICORN_PROJECT_ID}
+          sdkUrl={UNICORN_SDK_URL}
           width="100vw"
           height="100vh"
+          className="unicorn-scene"
+          scale={1}
+          dpi={1.5}
+          lazyLoad={false}
+          production
+        />
+      ) : null}
+    </div>
+  );
+}
+
+export function HeroUnicornScene() {
+  const [canRenderScene] = useState(() => {
+    installUnicornAttributionBlocker();
+    return true;
+  });
+
+  return (
+    <div className="hero-unicorn-effect" aria-hidden="true">
+      {canRenderScene ? (
+        <UnicornScene
+          projectId={HERO_UNICORN_PROJECT_ID}
+          sdkUrl={UNICORN_SDK_URL}
+          width="100%"
+          height="100%"
           className="unicorn-scene"
           scale={1}
           dpi={1.5}
