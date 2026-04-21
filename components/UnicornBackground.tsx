@@ -9,6 +9,7 @@ const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
 });
 
 const BLOCKED_ATTRIBUTION_URLS = ["made_in_us_small_web.svg", "free_user_logo.png"];
+const ATTRIBUTION_BLOCKER_VERSION = BLOCKED_ATTRIBUTION_URLS.join("|");
 const EMPTY_SVG_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
 
 function shouldBlockAttributionRequest(value: unknown) {
@@ -34,14 +35,14 @@ function installUnicornAttributionBlocker() {
   }
 
   const guardedWindow = window as Window & {
-    __unicornAttributionBlockerInstalled?: boolean;
+    __unicornAttributionBlockerVersion?: string;
   };
 
-  if (guardedWindow.__unicornAttributionBlockerInstalled) {
+  if (guardedWindow.__unicornAttributionBlockerVersion === ATTRIBUTION_BLOCKER_VERSION) {
     return;
   }
 
-  guardedWindow.__unicornAttributionBlockerInstalled = true;
+  guardedWindow.__unicornAttributionBlockerVersion = ATTRIBUTION_BLOCKER_VERSION;
 
   const imagePrototype = window.HTMLImageElement?.prototype;
   const xhrPrototype = window.XMLHttpRequest?.prototype;

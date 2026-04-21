@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { UnicornBackground } from "@/components/UnicornBackground";
+// import { UnicornBackground } from "@/components/UnicornBackground";
 import { profile } from "@/lib/portfolio-data";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <UnicornBackground />
+        {/* <UnicornBackground /> */}
         {children}
       </body>
     </html>
