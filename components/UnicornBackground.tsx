@@ -8,8 +8,25 @@ const UnicornScene = dynamic(() => import("unicornstudio-react/next"), {
   loading: () => null
 });
 
-const BLOCKED_ATTRIBUTION_URL = "made_in_us_small_web.svg";
+const BLOCKED_ATTRIBUTION_URLS = ["made_in_us_small_web.svg", "free_user_logo.png"];
 const EMPTY_SVG_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
+
+function shouldBlockAttributionRequest(value: unknown) {
+  const url =
+    typeof value === "string"
+      ? value
+      : value instanceof URL
+        ? value.href
+        : value instanceof Request
+          ? value.url
+          : "";
+
+  return BLOCKED_ATTRIBUTION_URLS.some((blockedUrl) => url.includes(blockedUrl));
+}
+
+function sanitizeAttributionUrl(value: string) {
+  return shouldBlockAttributionRequest(value) ? EMPTY_SVG_DATA_URI : value;
+}
 
 function installUnicornAttributionBlocker() {
   if (typeof window === "undefined") {
@@ -27,6 +44,7 @@ function installUnicornAttributionBlocker() {
   guardedWindow.__unicornAttributionBlockerInstalled = true;
 
   const imagePrototype = window.HTMLImageElement?.prototype;
+  const xhrPrototype = window.XMLHttpRequest?.prototype;
   const srcDescriptor = Object.getOwnPropertyDescriptor(imagePrototype, "src");
 
   if (srcDescriptor?.get && srcDescriptor.set) {
@@ -37,25 +55,62 @@ function installUnicornAttributionBlocker() {
         return srcDescriptor.get?.call(this);
       },
       set(this: HTMLImageElement, value: string) {
-        if (typeof value === "string" && value.includes(BLOCKED_ATTRIBUTION_URL)) {
-          srcDescriptor.set?.call(this, EMPTY_SVG_DATA_URI);
-          return;
-        }
-
-        srcDescriptor.set?.call(this, value);
+        srcDescriptor.set?.call(this, sanitizeAttributionUrl(value));
       }
     });
   }
 
   const originalSetAttribute = imagePrototype.setAttribute;
   imagePrototype.setAttribute = function setAttribute(name: string, value: string) {
-    if (name.toLowerCase() === "src" && value.includes(BLOCKED_ATTRIBUTION_URL)) {
-      originalSetAttribute.call(this, name, EMPTY_SVG_DATA_URI);
+    if (name.toLowerCase() === "src") {
+      originalSetAttribute.call(this, name, sanitizeAttributionUrl(value));
       return;
     }
 
     originalSetAttribute.call(this, name, value);
   };
+
+  const originalFetch = guardedWindow.fetch?.bind(guardedWindow);
+
+  if (originalFetch) {
+    guardedWindow.fetch = function fetch(input: RequestInfo | URL, init?: RequestInit) {
+      if (shouldBlockAttributionRequest(input)) {
+        return Promise.resolve(
+          new Response(EMPTY_SVG_DATA_URI, {
+            headers: { "content-type": "image/svg+xml" },
+            status: 200
+          })
+        );
+      }
+
+      return originalFetch(input, init);
+    };
+  }
+
+  if (xhrPrototype?.open) {
+    const originalOpen = xhrPrototype.open as (
+      method: string,
+      url: string | URL,
+      async: boolean,
+      username?: string | null,
+      password?: string | null
+    ) => void;
+
+    const openWithAttributionBlocker = function open(
+      this: XMLHttpRequest,
+      method: string,
+      url: string | URL,
+      async = true,
+      username?: string | null,
+      password?: string | null
+    ) {
+      const safeUrl = shouldBlockAttributionRequest(url) ? EMPTY_SVG_DATA_URI : url;
+
+      return originalOpen.call(this, method, safeUrl, async, username, password);
+    };
+
+    xhrPrototype.open = openWithAttributionBlocker as XMLHttpRequest["open"];
+  }
 }
 
 export function UnicornBackground() {
