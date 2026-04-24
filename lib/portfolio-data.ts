@@ -21,6 +21,9 @@ export const profile = {
   role: "AI Systems Developer | Backend, LLMs, APIs",
   intro:
     "I build LLM-powered products, tool-using assistants, and retrieval workflows with robust backend APIs and production-style systems.",
+  aboutStrip:
+    "I'm an AI systems-focused developer who cares about clarity, reliability, and real-world impact. I build clean backends and useful products that people can rely on.",
+  aboutFocus: "Focused on clean, production-ready software.",
   about:
     "I am an AI systems-focused software developer. I enjoy building systems that combine strong backend architecture with the power of large language models.",
   aboutDetail: "I care about clean code, scalable design, and real-world impact.",

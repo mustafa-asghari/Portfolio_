@@ -4,8 +4,7 @@ import {
   GitHubIcon,
   LinkedInIcon,
   MetaIcon,
-  SkillIcon,
-  StatIcon
+  SkillIcon
 } from "@/components/PortfolioIcons";
 import { MobileScrollAnimator } from "@/components/MobileScrollAnimator";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -90,20 +89,14 @@ export default function Home() {
       </section>
 
       <section className="projects-section section-divider" id="projects">
-        <div className="section-heading">
-          <p className="section-label">Featured Projects</p>
-          <a href={profile.github} className="view-all" target="_blank" rel="noreferrer">
-            View all projects
-            <ArrowIcon />
-          </a>
-        </div>
+        <p className="section-label">Featured Projects</p>
 
         <div className="project-grid">
           {projects.map((project) => (
             <article className="project-card" key={project.title}>
               <h2>{project.title}</h2>
               <p>{project.summary}</p>
-              <div className="tag-list" aria-label={`${project.title} technologies`}>
+              <div className="project-tags-inline" aria-label={`${project.title} technologies`}>
                 {project.tags.map((tag) => (
                   <span key={tag}>{tag}</span>
                 ))}
@@ -118,23 +111,20 @@ export default function Home() {
       </section>
 
       <section className="about-card" id="about">
-        <div className="about-icon" aria-hidden="true">
-          &lt;/&gt;
-        </div>
         <div className="about-copy">
-          <h2>About Me</h2>
-          <p>{profile.about}</p>
-          <p>{profile.aboutDetail}</p>
-          <p className="education">{profile.education}</p>
+          <p className="about-label">About</p>
+          <p className="about-summary">{profile.aboutStrip}</p>
         </div>
-        <div className="stats-grid">
-          {stats.map((stat) => (
+        <div className="stats-grid" aria-label="About highlights">
+          {stats.slice(0, 2).map((stat) => (
             <div className="stat-item" key={stat.label}>
-              <StatIcon type={stat.icon} />
               <strong>{stat.value}</strong>
               <span>{stat.label}</span>
             </div>
           ))}
+          <div className="stat-item stat-item-note">
+            <p>{profile.aboutFocus}</p>
+          </div>
         </div>
       </section>
 
